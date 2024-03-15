@@ -1,0 +1,130 @@
+#include <stdio.h>
+
+#define TAM 10
+
+struct Funcionario {
+    char nome[100];
+    char cargo[100];
+    float salarioBase;
+    float beneficios;
+    float descontos;
+};
+
+void cadastrarFuncionario(struct Funcionario funcionarios[], int quantidade);
+void exibirFuncionarios(struct Funcionario funcionarios[], int quantidade);
+float calcularSalarioLiquido(struct Funcionario funcionario);
+float calcularMediaSalarial(struct Funcionario funcionarios[], int quantidade);
+void exibirMaiorSalario(struct Funcionario funcionarios[], int quantidade);
+
+int main() {
+    struct Funcionario funcionarios[TAM];
+    int quantidade = 0;
+
+    int opcao;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1 - Cadastrar funcionario\n");
+        printf("2 - Exibir funcionarios\n");
+        printf("3 - Calcular media salarial\n");
+        printf("4 - Exibir maior salario\n");
+        printf("5 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastrarFuncionario(funcionarios, quantidade);
+                quantidade++;
+                break;
+            case 2:
+                exibirFuncionarios(funcionarios, quantidade);
+                break;
+            case 3:
+                printf("Media salarial: ");
+                printf("%.2f\n", calcularMediaSalarial(funcionarios, quantidade));
+                break;
+            case 4:
+                exibirMaiorSalario(funcionarios, quantidade);
+                break;
+            case 5:
+                return 0;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    }
+
+    return 0;
+}
+
+void cadastrarFuncionario(struct Funcionario funcionarios[], int quantidade) {
+    if (quantidade >= TAM) {
+        printf("Limite de funcionarios atingido!\n");
+        return;
+    }
+
+    printf("Nome: ");
+    scanf(" %[^\n]", funcionarios[quantidade].nome);
+
+    printf("Cargo: ");
+    scanf(" %[^\n]", funcionarios[quantidade].cargo);
+
+    printf("Salario base: ");
+    scanf("%f", &funcionarios[quantidade].salarioBase);
+
+    printf("Beneficios: ");
+    scanf("%f", &funcionarios[quantidade].beneficios);
+
+    printf("Descontos: ");
+    scanf("%f", &funcionarios[quantidade].descontos);
+}
+
+void exibirFuncionarios(struct Funcionario funcionarios[], int quantidade) {
+    for (int i = 0; i < quantidade; i++) {
+        printf("\nNome: %s\n", funcionarios[i].nome);
+        printf("Cargo: %s\n", funcionarios[i].cargo);
+        printf("Salario base: %.2f\n", funcionarios[i].salarioBase);
+        printf("Beneficios: %.2f\n", funcionarios[i].beneficios);
+        printf("Descontos: %.2f\n", funcionarios[i].descontos);
+        printf("Salario liquido: %.2f\n", calcularSalarioLiquido(funcionarios[i]));
+    }
+}
+
+float calcularSalarioLiquido(struct Funcionario funcionario) {
+    return funcionario.salarioBase + funcionario.beneficios - funcionario.descontos;
+}
+
+float calcularMediaSalarial(struct Funcionario funcionarios[], int quantidade) {
+    if (quantidade == 0) {
+        printf("Nenhum funcionario cadastrado!\n");
+        return 0;
+    }
+
+    float soma = 0;
+
+    for (int i = 0; i < quantidade; i++) {
+        soma += calcularSalarioLiquido(funcionarios[i]);
+    }
+
+    return soma / quantidade;
+}
+
+void exibirMaiorSalario(struct Funcionario funcionarios[], int quantidade) {
+    if (quantidade == 0) {
+        printf("Nenhum funcionario cadastrado!\n");
+        return;
+    }
+
+    float maiorSalario = calcularSalarioLiquido(funcionarios[0]);
+    int indiceMaiorSalario = 0;
+
+    for (int i = 1; i < quantidade; i++) {
+        if (calcularSalarioLiquido(funcionarios[i]) > maiorSalario) {
+            maiorSalario = calcularSalarioLiquido(funcionarios[i]);
+            indiceMaiorSalario = i;
+        }
+    }
+
+    printf("Maior salario liquido: %.2f\n", maiorSalario);
+    printf("Funcionario: %s\n", funcionarios[indiceMaiorSalario].nome);
+}
