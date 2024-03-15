@@ -1,0 +1,100 @@
+#include <stdio.h>
+
+#define MAX_CLIENTES 50
+
+
+struct Data {
+    int dia;
+    int mes;
+    int ano;
+};
+
+struct Cliente {
+    char nome[150];
+    struct Data dataNascimento;
+    int idade;
+    char sexo;
+};
+
+int calcularIdade(struct Data dataNascimento, struct Data dataAtual) {
+    int idade = dataAtual.ano - dataNascimento.ano;
+
+    if (dataAtual.mes < dataNascimento.mes || (dataAtual.mes == dataNascimento.mes && dataAtual.dia < dataNascimento.dia)) {
+        idade--;
+    }
+    return idade;
+}
+
+int main() {
+
+    struct Cliente clientes[MAX_CLIENTES];
+    int numClientes = 0;
+
+    struct Data dataAtual;
+
+    printf("Informe a data atual (DD MM AAAA): ");
+    scanf("%d %d %d", &dataAtual.dia, &dataAtual.mes, &dataAtual.ano);
+
+    int opcao;
+    do {
+
+        printf("\nMenu:\n");
+        printf("1. Cadastrar Cliente\n");
+        printf("2. Listar Clientes\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+            case 1:
+
+                if (numClientes < MAX_CLIENTES) {
+
+                    printf("\nCadastro de cliente:\n");
+                    printf("Nome: ");
+
+                    scanf("%*c");
+
+                    scanf("%[^\n]", clientes[numClientes].nome);
+                    printf("Data de nascimento (DD MM AAAA): ");
+                    scanf("%d %d %d", &clientes[numClientes].dataNascimento.dia,
+                                       &clientes[numClientes].dataNascimento.mes,
+                                       &clientes[numClientes].dataNascimento.ano);
+                    printf("Sexo (M/F): ");
+                    scanf(" %c", &clientes[numClientes].sexo);
+
+                    clientes[numClientes].idade = calcularIdade(clientes[numClientes].dataNascimento, dataAtual);
+
+                    numClientes++;
+
+                    printf("Cliente cadastrado com sucesso!\n");
+                } else {
+                    printf("Limite de clientes atingido!\n");
+                }
+                break;
+
+            case 2:
+
+                if (numClientes == 0) {
+                    printf("\nNenhum cliente cadastrado.\n");
+                } else {
+
+                    printf("\nLista de clientes:\n");
+                    printf("Nome\t\tData de Nascimento\tIdade\tSexo\n");
+                    for (int i = 0; i < numClientes; i++) {
+                        printf("%s\t\t%d/%d/%d\t\t%d\t%c\n", clientes[i].nome,
+                               clientes[i].dataNascimento.dia, clientes[i].dataNascimento.mes,
+                               clientes[i].dataNascimento.ano, clientes[i].idade, clientes[i].sexo);
+                    }
+                }
+                break;
+            case 0:
+                printf("\nSaindo...\n");
+                break;
+            default:
+                printf("\nOpcao invalida! Tente novamente.\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
