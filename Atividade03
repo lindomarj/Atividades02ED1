@@ -1,0 +1,170 @@
+#include <stdio.h>
+
+#define MAX_SIZE 20
+
+struct Conjunto {
+    int elementos[MAX_SIZE];
+    int tamanho;
+};
+
+struct Conjunto criarConjuntoVazio() {
+    struct Conjunto conjunto = { .tamanho = 0 };
+    return conjunto;
+}
+
+struct Conjunto lerConjunto() {
+    struct Conjunto conjunto;
+    do {
+        printf("Digite o tamanho do conjunto (no maximo %d elementos): ", MAX_SIZE);
+        scanf("%d", &conjunto.tamanho);
+        if (conjunto.tamanho > MAX_SIZE) {
+            printf("Tamanho do conjunto excede o limite. Por favor, digite novamente.\n");
+        }
+    } while (conjunto.tamanho > MAX_SIZE);
+
+    printf("Digite os elementos do conjunto:\n");
+    for (int i = 0; i < conjunto.tamanho; i++) {
+        scanf("%d", &conjunto.elementos[i]);
+    }
+    return conjunto;
+}
+
+void imprimirConjunto(struct Conjunto conjunto) {
+    printf("{ ");
+    for (int i = 0; i < conjunto.tamanho; i++) {
+        printf("%d", conjunto.elementos[i]);
+        if (i < conjunto.tamanho - 1) {
+            printf(", ");
+        }
+    }
+    printf(" }\n");
+}
+
+struct Conjunto uniaoConjuntos(struct Conjunto conjunto1, struct Conjunto conjunto2) {
+    struct Conjunto resultado = conjunto1;
+    for (int i = 0; i < conjunto2.tamanho; i++) {
+        int elemento = conjunto2.elementos[i];
+        int encontrado = 0;
+        for (int j = 0; j < resultado.tamanho; j++) {
+            if (resultado.elementos[j] == elemento) {
+                encontrado = 1;
+                break;
+            }
+        }
+        if (!encontrado && resultado.tamanho < MAX_SIZE) {
+            resultado.elementos[resultado.tamanho++] = elemento;
+        }
+    }
+
+    for (int i = 0; i < resultado.tamanho - 1; i++) {
+        for (int j = i + 1; j < resultado.tamanho; j++) {
+            if (resultado.elementos[i] > resultado.elementos[j]) {
+                int temp = resultado.elementos[i];
+                resultado.elementos[i] = resultado.elementos[j];
+                resultado.elementos[j] = temp;
+            }
+        }
+    }
+
+    return resultado;
+}
+
+struct Conjunto intersecaoConjuntos(struct Conjunto conjunto1, struct Conjunto conjunto2) {
+    struct Conjunto resultado = criarConjuntoVazio();
+    for (int i = 0; i < conjunto1.tamanho; i++) {
+        int elemento = conjunto1.elementos[i];
+        for (int j = 0; j < conjunto2.tamanho; j++) {
+            if (conjunto2.elementos[j] == elemento) {
+                resultado.elementos[resultado.tamanho++] = elemento;
+                break;
+            }
+        }
+    }
+
+    for (int i = 0; i < resultado.tamanho - 1; i++) {
+        for (int j = i + 1; j < resultado.tamanho; j++) {
+            if (resultado.elementos[i] > resultado.elementos[j]) {
+                int temp = resultado.elementos[i];
+                resultado.elementos[i] = resultado.elementos[j];
+                resultado.elementos[j] = temp;
+            }
+        }
+    }
+
+    return resultado;
+}
+
+int main() {
+    struct Conjunto conjunto1, conjunto2, resultado;
+    int opcao;
+    int conjuntosLidos = 0;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Zerar conjuntos (vazio)\n");
+        printf("2. Inserir/Ler conjuntos\n");
+        printf("3. Fazer a uniao de dois conjuntos\n");
+        printf("4. Fazer a intersecao de dois conjuntos\n");
+        printf("5. Imprimir os conjuntos inseridos\n");
+        printf("6. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch(opcao) {
+            case 1:
+                printf("\nCriando conjunto vazio 1...\n");
+                conjunto1 = criarConjuntoVazio();
+                printf("Criando conjunto vazio 2...\n");
+                conjunto2 = criarConjuntoVazio();
+                printf("Conjuntos vazios criados.\n");
+                break;
+            case 2:
+                printf("\nLendo conjunto 1...\n");
+                conjunto1 = lerConjunto();
+                printf("Lendo conjunto 2...\n");
+                conjunto2 = lerConjunto();
+                printf("Conjuntos lidos.\n");
+                conjuntosLidos = 1;
+                break;
+            case 3:
+                if (conjuntosLidos) {
+                    printf("\nFazendo a uniao dos conjuntos...\n");
+                    resultado = uniaoConjuntos(conjunto1, conjunto2);
+                    printf("Uniao dos conjuntos feita.\n");
+                    printf("\nConjunto unido:\n");
+                    imprimirConjunto(resultado);
+                } else {
+                    printf("Por favor, leia os conjuntos antes de fazer a uniao.\n");
+                }
+                break;
+            case 4:
+                if (conjuntosLidos) {
+                    printf("\nFazendo a intersecao dos conjuntos...\n");
+                    resultado = intersecaoConjuntos(conjunto1, conjunto2);
+                    printf("Intersecao dos conjuntos feita.\n");
+                    printf("\nIntersecao dos conjuntos:\n");
+                    imprimirConjunto(resultado);
+                } else {
+                    printf("Por favor, insira/leia os conjuntos antes de fazer a intersecao.\n");
+                }
+                break;
+            case 5:
+                if (conjuntosLidos) {
+                    printf("\nImprimindo conjunto 1:\n");
+                    imprimirConjunto(conjunto1);
+                    printf("Imprimindo conjunto 2:\n");
+                    imprimirConjunto(conjunto2);
+                } else {
+                    printf("Por favor, insira/leia os conjuntos antes de imprimir.\n");
+                }
+                break;
+            case 6:
+                printf("\nSaindo...\n");
+                break;
+            default:
+                printf("\nOpcao invalida! Tente novamente.\n");
+        }
+    } while (opcao != 6);
+
+    return 0;
+}
